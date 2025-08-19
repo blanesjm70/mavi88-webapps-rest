@@ -7,8 +7,10 @@ import {
 } from '@aws-cdk/aws-amplify-alpha';
 
 interface AmplifyStackProps extends StackProps {
+	readonly userPoolId: string;
+	readonly userPoolClientId: string;
+	readonly identityPoolId: string;
 }
-
 
 export class AmplifyHostingStack extends Stack {
 	constructor(scope: Construct, id: string, props: AmplifyStackProps) {
@@ -23,7 +25,10 @@ export class AmplifyHostingStack extends Stack {
 			}),
 			environmentVariables: {
 				REGION: this.region,
-				IS_MOCK: 'true'
+				IS_MOCK: 'true',
+				USER_POOL_ID: props.userPoolId,
+				USER_POOL_CLIENT_ID: props.userPoolClientId,
+				IDENTITY_POOL_ID: props.identityPoolId,
             },
 		});
 
