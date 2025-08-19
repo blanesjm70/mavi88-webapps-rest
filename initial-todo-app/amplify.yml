@@ -7,6 +7,9 @@ frontend:
     build:
       commands:
         - echo "VITE_IS_MOCK"=$IS_MOCK >> .env
+        - echo "VITE_USER_POOL_ID=$USER_POOL_ID" >> .env
+        - echo "VITE_USER_POOL_CLIENT_ID=$USER_POOL_CLIENT_ID" >> .env
+        - echo "VITE_IDENTITY_POOL_ID=$IDENTITY_POOL_ID" >> .env
         - npm run build
   artifacts:
     baseDirectory: dist
