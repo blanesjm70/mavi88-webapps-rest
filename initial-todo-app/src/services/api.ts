@@ -106,7 +106,14 @@ const realApi = {
     id: string,
     updates: Partial<{ title: string; completed: boolean }>
   ) {
-        // TO IMPLEMENT
+    const response = await fetch(`${API_URL}todos/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updates),
+    });
+    return handleResponse(response);
 
   },
 

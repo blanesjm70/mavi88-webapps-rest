@@ -71,7 +71,8 @@ export class BackendStack extends Stack {
             actions: [
             'dynamodb:PutItem',
             'dynamodb:Query',
-            'dynamodb:DeleteItem'
+            'dynamodb:DeleteItem',
+            'dynamodb:UpdateItem'
             ],
             resources: [
                 todoTable.tableArn,
@@ -111,6 +112,12 @@ export class BackendStack extends Stack {
         todoWithId.addMethod('DELETE', integration, { // DELETE /todos/{id}
             requestParameters: {
                 'method.request.path.id': true  // Makes the id parameter required
+            }
+        });
+
+        todoWithId.addMethod('PATCH', integration, { // PATCH /todos/{id}
+            requestParameters: {
+              'method.request.path.id': true  // Makes the id parameter required
             }
         });
     
