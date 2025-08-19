@@ -4,7 +4,7 @@ import { Construct } from "constructs";
 import path = require("path");
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
-import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
+import { AttributeType, BillingMode, GlobalSecondaryIndexProps, Table } from "aws-cdk-lib/aws-dynamodb";
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 
 export class BackendStack extends Stack {
@@ -34,6 +34,15 @@ export class BackendStack extends Stack {
             billingMode: BillingMode.PAY_PER_REQUEST,
 		});
 
+        const gsi1: GlobalSecondaryIndexProps = {
+			indexName: 'todoId-index',
+			partitionKey: {
+				name: 'todoId',
+				type: AttributeType.STRING,
+			},
+		};
+
+        todoTable.addGlobalSecondaryIndex(gsi1);
 
         // Backend function
         const backendFunction = new NodejsFunction(this, 'TodoWebAppBackendFunction', {
@@ -51,7 +60,8 @@ export class BackendStack extends Stack {
             },
 
             environment: {
-                TABLE_NAME: todoTable.tableName
+                TABLE_NAME: todoTable.tableName,
+                INDEX_NAME: gsi1.indexName
             }
         });
 
@@ -60,10 +70,12 @@ export class BackendStack extends Stack {
             effect: Effect.ALLOW,
             actions: [
             'dynamodb:PutItem',
-            'dynamodb:Query'
+            'dynamodb:Query',
+            'dynamodb:DeleteItem'
             ],
             resources: [
-                todoTable.tableArn
+                todoTable.tableArn,
+                 `${todoTable.tableArn}/index/*`
             ]
         }));
 
@@ -80,6 +92,14 @@ export class BackendStack extends Stack {
         const todos = backendApi.root.addResource('todos');
         todos.addMethod('GET', integration);
         todos.addMethod('POST', integration);
+
+        // Add /todos/{id} resource
+        const todoWithId = todos.addResource('{id}');
+        todoWithId.addMethod('DELETE', integration, { // DELETE /todos/{id}
+            requestParameters: {
+                'method.request.path.id': true  // Makes the id parameter required
+            }
+        });
     
         // Output the API Gateway URL
         this.apiUrl = new CfnOutput(this, 'TodoWebAppAPI', {
