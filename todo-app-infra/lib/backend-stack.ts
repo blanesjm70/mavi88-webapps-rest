@@ -4,12 +4,36 @@ import { Construct } from "constructs";
 import path = require("path");
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
+import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 
 export class BackendStack extends Stack {
     public readonly apiUrl: CfnOutput;
 
     constructor(scope: Construct, id: string, props: StackProps) {
         super(scope, id, props);
+
+        /* Item schema:
+        todo: {
+            userId: string,
+            createdAt: string,
+            todoId: string,
+            title: string,
+            completed: boolean
+        }
+        */
+		const todoTable = new Table(this, `TodoWebAppTableDynamoDB`, {
+			partitionKey: {
+				name: 'userId',
+				type: AttributeType.STRING,
+			},
+			sortKey: {
+				name: 'createdAt',
+				type: AttributeType.STRING,
+			},
+            billingMode: BillingMode.PAY_PER_REQUEST,
+		});
+
 
         // Backend function
         const backendFunction = new NodejsFunction(this, 'TodoWebAppBackendFunction', {
@@ -27,9 +51,21 @@ export class BackendStack extends Stack {
             },
 
             environment: {
-                //Add environment variables if needed
+                TABLE_NAME: todoTable.tableName
             }
         });
+
+        // Give permissions to the function to access the dynamodb table
+        backendFunction.addToRolePolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+            'dynamodb:PutItem',
+            'dynamodb:Query'
+            ],
+            resources: [
+                todoTable.tableArn
+            ]
+        }));
 
         // Create API Gateway
         const backendApi = new apigateway.RestApi(this, 'TodoWebAppAPIGateway', {
