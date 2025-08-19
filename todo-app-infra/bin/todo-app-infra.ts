@@ -8,7 +8,9 @@ const app = new cdk.App();
 
 const cognitoStack = new CognitoStack(app, 'TodoAppCognitoStack', {});
 
-const backendStack = new BackendStack(app, 'TodoAppBackendStack', {});
+const backendStack = new BackendStack(app, 'TodoAppBackendStack', {
+    userPoolArn: cognitoStack.userPoolArn.value
+});
 
 const amplifyStack = new AmplifyHostingStack(app, 'TodoAppAmplifyHostingStack', {
     userPoolId: cognitoStack.userPoolId.value,
