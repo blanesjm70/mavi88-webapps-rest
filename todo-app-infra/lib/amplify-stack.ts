@@ -23,6 +23,7 @@ export class AmplifyHostingStack extends Stack {
 			}),
 			environmentVariables: {
 				REGION: this.region,
+				IS_MOCK: 'true'
             },
 		});
 
