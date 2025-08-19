@@ -24,10 +24,9 @@ export const handler = async (event: any = {}): Promise<any> => {
 
         console.log(httpMethod);
         console.log(path);
-
-         //FAKE USER ID
-         const userId = 'MR_FAKE';
-
+  
+        const userId = event.requestContext.authorizer?.claims['cognito:username'];
+      
          switch (httpMethod) {
             case 'GET':
                 console.log('GET all TODOs');
