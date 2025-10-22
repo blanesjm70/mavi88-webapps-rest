@@ -13,6 +13,8 @@ interface AmplifyStackProps extends StackProps {
 	readonly serverURL: string;
 	readonly githubOwner: string;
 	readonly githubRepository: string;
+	readonly customDomain?: string;
+	readonly certificateArn?: string;
 }
 
 export class AmplifyHostingStack extends Stack {
@@ -48,6 +50,18 @@ export class AmplifyHostingStack extends Stack {
 			target: '/index.html',
 			status: RedirectStatus.REWRITE,
 		});
+
+        // Add custom domain if provided
+        if (props.customDomain && props.certificateArn) {
+            const domain = amplifyApp.addDomain(props.customDomain, {
+                subDomains: [
+                    {
+                        branch: main,
+                        prefix: 'todo'
+                    }
+                ]
+            });
+        }
 
         new CfnOutput(this, 'AmplifyAppName', {
 			value: amplifyApp.appName,

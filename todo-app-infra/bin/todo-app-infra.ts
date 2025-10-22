@@ -4,6 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import { AmplifyHostingStack } from '../lib/amplify-stack';
 import { CognitoStack } from '../lib/cognito-stack';
 import { BackendStack } from '../lib/backend-stack';
+import { CertificateStack } from '../lib/certificate-stack';
 
 const app = new cdk.App();
 
@@ -14,11 +15,18 @@ const githubRepository = process.env.GITHUB_REPOSITORY;
 const apiDomainName = process.env.API_DOMAIN_NAME;
 const hostedZoneDomain = process.env.HOSTED_ZONE_DOMAIN;
 
+
 if (!githubOwner || !githubRepository || !apiDomainName || !hostedZoneDomain) {
     throw new Error('Missing required environment variables: GITHUB_OWNER, GITHUB_REPOSITORY, API_DOMAIN_NAME, HOSTED_ZONE_DOMAIN');
 }
 
 const env = { account, region };
+
+// Certificate stack must be in us-east-1 for Amplify
+const certificateStack = new CertificateStack(app, 'TodoAppCertificateStack', {
+    env: { account, region: 'us-east-1' },
+    hostedZoneDomain
+});
 
 const cognitoStack = new CognitoStack(app, 'TodoAppCognitoStack', {
     env,
@@ -38,5 +46,7 @@ const amplifyStack = new AmplifyHostingStack(app, 'TodoAppAmplifyHostingStack', 
     identityPoolId: cognitoStack.identityPoolId.value,
     serverURL: backendStack.apiUrl.value,
     githubOwner,
-    githubRepository
+    githubRepository,
+    customDomain: hostedZoneDomain,
+    certificateArn: certificateStack.certificateArn.value
 });
