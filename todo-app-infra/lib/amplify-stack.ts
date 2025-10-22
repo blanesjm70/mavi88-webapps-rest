@@ -11,6 +11,8 @@ interface AmplifyStackProps extends StackProps {
 	readonly userPoolClientId: string;
 	readonly identityPoolId: string;
 	readonly serverURL: string;
+	readonly githubOwner: string;
+	readonly githubRepository: string;
 }
 
 export class AmplifyHostingStack extends Stack {
@@ -20,8 +22,8 @@ export class AmplifyHostingStack extends Stack {
         // Create the Amplify application
 		const amplifyApp = new App(this, `TodoWebApp`, {
 			sourceCodeProvider: new GitHubSourceCodeProvider({
-				owner: 'mavi888',
-				repository: 'linkedin-todo-webapp',
+				owner: props.githubOwner,
+				repository: props.githubRepository,
 				oauthToken: SecretValue.secretsManager('github-token'),
 			}),
 			environmentVariables: {

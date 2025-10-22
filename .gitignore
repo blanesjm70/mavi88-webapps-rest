@@ -1,1 +1,5 @@
 .DS_Store
+package-lock.json
+todo-app-infra/package-lock.json
+todo-app-infra/lambda/package-lock.json
+todo-app-infra/cdk.context.json
