@@ -114,20 +114,20 @@ export class BackendStack extends Stack {
 
         // Get the hosted zone for your domain
         const hostedZone = HostedZone.fromLookup(this, 'TestHostedZone', {
-        domainName: props.hostedZoneDomain,
+            domainName: props.hostedZoneDomain,
         });
 
         // Create SSL certificate in current region for regional endpoint
         const certificate = new Certificate(this, 'TestApiCertificate', {
-        domainName: domainName,
-        validation: CertificateValidation.fromDns(hostedZone),
+            domainName: domainName,
+            validation: CertificateValidation.fromDns(hostedZone),
         });
 
         // Create custom domain for API Gateway (regional endpoint)
         const customDomain = new apigateway.DomainName(this, 'TestCustomDomain', {
-        domainName: domainName,
-        certificate: certificate,
-        endpointType: apigateway.EndpointType.REGIONAL,
+            domainName: domainName,
+            certificate: certificate,
+            endpointType: apigateway.EndpointType.REGIONAL,
         });
 
         // Map the custom domain to the API
@@ -135,11 +135,11 @@ export class BackendStack extends Stack {
 
         // Create Route53 record
         new ARecord(this, 'ApiAliasRecord', {
-        zone: hostedZone,
-        recordName: 'test',
-        target: RecordTarget.fromAlias(
-            new ApiGatewayDomain(customDomain)
-        ),
+            zone: hostedZone,
+            recordName: 'test',
+            target: RecordTarget.fromAlias(
+                new ApiGatewayDomain(customDomain)
+            ),
         });
 
         //Create authorizers
