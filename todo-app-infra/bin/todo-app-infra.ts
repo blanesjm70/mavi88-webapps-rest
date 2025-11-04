@@ -5,6 +5,7 @@ import { AmplifyHostingStack } from '../lib/amplify-stack';
 import { CognitoStack } from '../lib/cognito-stack';
 import { BackendStack } from '../lib/backend-stack';
 import { CertificateStack } from '../lib/certificate-stack';
+import { CloudWatchStack } from '../lib/cloudwatch-stack';
 
 const app = new cdk.App();
 
@@ -49,4 +50,10 @@ const amplifyStack = new AmplifyHostingStack(app, 'TodoAppAmplifyHostingStack', 
     githubRepository,
     customDomain: hostedZoneDomain,
     certificateArn: certificateStack.certificateArn.value
+});
+
+const cloudWatchStack = new CloudWatchStack(app, 'TodoAppCloudWatchStack', {
+    env,
+    amplifyAppId: amplifyStack.amplifyAppId.value,
+    functionName: backendStack.lambdaFunctionName.value
 });
