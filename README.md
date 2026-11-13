@@ -1,46 +1,86 @@
-# WebApp for REST Backends
+# Task Master - Modern Todo Application
 
-_Infrastructure as code framework used_: AWS CDK
-_AWS Services used_: AWS Amplify, AWS Lambda, Amazon Cognito, Amazon API Gateway, Amazon DynamoDB 
+A full-stack todo application built with React, TypeScript, and AWS Lambda, featuring user authentication, real-time updates, and a beautiful UI.
 
-## Summary of the demo
+![Task Master Screenshot](https://images.unsplash.com/photo-1540350394557-8d14678e7f91?w=1000&q=80)
 
-In this demo you will see:
-- How to create WebApps with AWS CDK
-- How to host WebApps with AWS Amplify
-- How to secure APIs and WebApps using Amazon Cognito
-- How to create backends with Amazon Api Gateway, AWS Lambda and Amazon DynamoDB
+## Features
 
-Important: this application uses various AWS services and there are costs associated with these services after the Free Tier usage - please see the AWS Pricing page for details. You are responsible for any AWS costs incurred. No warranty is implied in this example.
+- 🔐 User authentication (login/register)
+- ✨ Beautiful, responsive UI with Tailwind CSS
+- 📱 Mobile-friendly design
+- ⚡ Real-time updates
+- 🎯 Filter todos by status
+- ✏️ Edit todo items inline
+- 🗑️ Delete and clear completed todos
+- 💾 Persistent storage with AWS Lambda backend
+- 🔧 Mock API for local development
 
-## Requirements
+## Prerequisites
 
-- AWS CLI already configured with Administrator permission
-- AWS CDK - v2
-- NodeJS 20.x installed
-- CDK bootstrapped in your account
+- Node.js 18+ and npm
+- AWS Account (for Lambda deployment)
+- Basic knowledge of React and TypeScript
 
-## Deploy this demo
+## Getting Started
 
-Deploy the project to the cloud:
-
-```
-cdk deploy
-```
-
-When asked about functions that may not have authorization defined, answer (y)es. The access to those functions will be open to anyone, so keep the app deployed only for the time you need this demo running.
-
-To delete the app:
-
-```
-cdk destroy
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd initial-todo-app
 ```
 
-### AWS CDK useful commands
+2. Install dependencies:
+```bash
+npm install
+```
 
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
-- `cdk deploy` deploy this stack to your default AWS account/region
-- `cdk diff` compare deployed stack with current state
-- `cdk synth` emits the synthesized CloudFormation template
+3. Local Development:
+   - The app includes a mock API that simulates the backend functionality
+   - Use these demo credentials to test:
+     - Email: demo@example.com
+     - Password: demo123
+   - To use the mock API, ensure `IS_MOCK = true` in `src/services/api.ts`
+
+4. AWS Integration:
+   - Set up environment variables in `.env`:
+     ```env
+     VITE_API_URL=your_api_gateway_url
+     ```
+   - Set `IS_MOCK = false` in `src/services/api.ts`
+
+5. Start the development server:
+```bash
+npm run dev
+```
+
+## Building for Production
+
+To create a production build:
+```bash
+npm run build
+```
+
+To preview the production build locally:
+```bash
+npm run preview
+```
+
+## Technologies Used
+
+- **Frontend**:
+  - React 18
+  - TypeScript
+  - Tailwind CSS
+  - Vite
+  - Lucide Icons
+
+## License
+
+This project is licensed under the MIT License.
+
+## Acknowledgments
+
+- [Lucide Icons](https://lucide.dev/) for beautiful icons
+- [Tailwind CSS](https://tailwindcss.com/) for styling
+- [AWS](https://aws.amazon.com/) for backend infrastructure
